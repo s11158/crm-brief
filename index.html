@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бриф на внедрение Zoho CRM</title>
+<style>
+  :root{
+    --ink:#16181a;
+    --ink-soft:#5c6166;
+    --line:#e4e2dc;
+    --line-soft:#efede8;
+    --paper:#f6f4ef;
+    --paper-2:#fcfbf8;
+    --accent:#1f3a34;      /* deep pine — calm, premium */
+    --accent-2:#c8704f;    /* warm clay accent */
+    --accent-soft:#eef2f0;
+    --white:#ffffff;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(20,24,26,.04), 0 8px 30px rgba(20,24,26,.05);
+    --maxw:760px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter','Helvetica Neue',Helvetica,Arial,system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent);color:#fff}
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:rgba(246,244,239,.86);
+    backdrop-filter:saturate(140%) blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:var(--maxw);margin:0 auto;padding:14px 22px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .brandmark{display:flex;align-items:center;gap:11px;letter-spacing:.02em}
+  .brandmark .dot{width:9px;height:9px;border-radius:50%;background:var(--accent-2)}
+  .brandmark b{font-weight:600;font-size:15px;letter-spacing:.14em;text-transform:uppercase}
+  .progresswrap{flex:1;max-width:240px;height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+  .progressbar{height:100%;width:0;background:var(--accent);transition:width .35s ease}
+  .progresspct{font-size:12.5px;color:var(--ink-soft);min-width:40px;text-align:right;font-variant-numeric:tabular-nums}
+
+  /* ---------- Hero ---------- */
+  .hero{max-width:var(--maxw);margin:0 auto;padding:64px 22px 30px}
+  .eyebrow{
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent-2);font-weight:600;margin-bottom:20px;
+  }
+  .hero h1{
+    font-size:clamp(30px,6vw,46px);line-height:1.04;letter-spacing:-.02em;
+    font-weight:600;margin:0 0 18px;
+  }
+  .hero p{font-size:17px;color:var(--ink-soft);max-width:60ch;margin:0 0 8px}
+  .hero .meta{
+    margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;
+  }
+  .chip{
+    font-size:12.5px;color:var(--ink-soft);background:var(--white);
+    border:1px solid var(--line);border-radius:99px;padding:6px 13px;
+  }
+
+  /* ---------- Sections ---------- */
+  .stack{max-width:var(--maxw);margin:0 auto;padding:0 22px 40px}
+  .section{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:var(--radius);
+    margin:18px 0;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .section-head{
+    display:flex;align-items:flex-start;gap:16px;padding:24px 26px;
+    cursor:pointer;user-select:none;
+  }
+  .section-num{
+    font-size:13px;font-weight:600;color:#fff;background:var(--accent);
+    width:30px;height:30px;flex:none;border-radius:9px;display:grid;place-items:center;
+    font-variant-numeric:tabular-nums;letter-spacing:.02em;margin-top:1px;
+  }
+  .section-titles{flex:1}
+  .section-titles h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .section-titles .sub{margin:5px 0 0;font-size:14px;color:var(--ink-soft)}
+  .chev{flex:none;width:22px;height:22px;color:var(--ink-soft);transition:transform .3s ease;margin-top:4px}
+  .section.collapsed .chev{transform:rotate(-90deg)}
+  .section-body{padding:2px 26px 12px}
+  .section.collapsed .section-body{display:none}
+
+  /* ---------- Questions ---------- */
+  .q{padding:22px 0;border-top:1px solid var(--line-soft)}
+  .q:first-child{border-top:none}
+  .q-label{display:flex;gap:12px;align-items:baseline;margin-bottom:4px}
+  .q-num{font-size:13px;color:var(--accent-2);font-weight:600;font-variant-numeric:tabular-nums;flex:none}
+  .q-title{font-size:16px;font-weight:600;letter-spacing:-.005em}
+  .q-hint{font-size:13.5px;color:var(--ink-soft);margin:2px 0 14px 26px}
+  .q-tag{
+    font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+    border:1px solid var(--line);border-radius:6px;padding:2px 7px;margin-left:8px;font-weight:500;
+    vertical-align:middle;
+  }
+  .options{display:flex;flex-direction:column;gap:9px;margin-left:26px}
+
+  .opt{
+    display:flex;align-items:flex-start;gap:12px;padding:12px 14px;
+    border:1px solid var(--line);border-radius:11px;background:var(--white);
+    cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;
+  }
+  .opt:hover{border-color:#cfccc4}
+  .opt input{margin:2px 0 0;flex:none;width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+  .opt span{font-size:15px;line-height:1.35}
+  .opt.checked{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+
+  .other{margin:11px 0 0 26px;display:flex;align-items:center;gap:10px}
+  .other label{font-size:13px;color:var(--ink-soft);flex:none}
+  .other input,textarea.free,.text-input{
+    width:100%;font-family:inherit;font-size:15px;color:var(--ink);
+    background:var(--white);border:1px solid var(--line);border-radius:9px;
+    padding:10px 13px;transition:border-color .15s,box-shadow .15s;
+  }
+  .other input:focus,textarea.free:focus,.text-input:focus{
+    outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(31,58,52,.12)
+  }
+  textarea.free{resize:vertical;min-height:84px;line-height:1.5;margin-left:26px;width:calc(100% - 26px)}
+  .text-input{margin-left:26px;width:calc(100% - 26px)}
+
+  /* ---------- Identity block ---------- */
+  .ident{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-left:26px}
+  .ident .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px}
+  .ident .field input{width:100%}
+  @media(max-width:560px){.ident{grid-template-columns:1fr}}
+
+  /* ---------- Footer / actions ---------- */
+  .actions{
+    max-width:var(--maxw);margin:0 auto;padding:8px 22px 70px;
+  }
+  .actions-card{
+    background:var(--accent);color:#fff;border-radius:var(--radius);padding:30px 28px;
+    box-shadow:var(--shadow);
+  }
+  .actions-card h3{margin:0 0 6px;font-size:20px;font-weight:600}
+  .actions-card p{margin:0 0 20px;font-size:14.5px;color:rgba(255,255,255,.78);max-width:54ch}
+  .btn-row{display:flex;flex-wrap:wrap;gap:12px}
+  .btn{
+    font-family:inherit;font-size:15px;font-weight:600;border-radius:10px;
+    padding:13px 22px;cursor:pointer;border:1px solid transparent;transition:transform .1s,opacity .15s,background .15s;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:#fff;color:var(--accent)}
+  .btn-primary:hover{opacity:.9}
+  .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+  .btn-ghost:hover{background:rgba(255,255,255,.1)}
+  .save-row{
+    max-width:var(--maxw);margin:0 auto;padding:0 22px 22px;
+    display:flex;flex-wrap:wrap;gap:12px;align-items:center;
+  }
+  .save-row .btn-soft{
+    background:var(--white);color:var(--ink);border:1px solid var(--line);
+    font-size:14px;font-weight:500;border-radius:10px;padding:11px 18px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:border-color .15s,background .15s;
+  }
+  .save-row .btn-soft:hover{border-color:#cfccc4;background:var(--paper-2)}
+  .save-note{font-size:13px;color:var(--ink-soft)}
+  .hidden-file{display:none}
+
+  .pagefoot{text-align:center;color:var(--ink-soft);font-size:12.5px;padding:0 22px 60px}
+  .pagefoot .dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--accent-2);margin:0 8px;vertical-align:middle}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:13px 20px;border-radius:11px;font-size:14px;
+    box-shadow:0 10px 40px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:all .3s ease;z-index:100;
+    max-width:90vw;text-align:center;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brandmark"><span class="dot"></span><b>CRM&nbsp;Brief</b></div>
+    <div class="progresswrap"><div class="progressbar" id="bar"></div></div>
+    <div class="progresspct" id="pct">0%</div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="eyebrow">Внедрение Zoho CRM · опросник для руководства</div>
+  <h1>Расскажите, как устроены ваши продажи — мы соберём под это CRM</h1>
+  <p>Этот бриф помогает спроектировать систему так, чтобы ни один входящий клиент и ни одна переписка не терялись, менеджеры были под контролем, а сделки двигались по понятным воронкам.</p>
+  <p>Отвечайте свободно: где есть варианты — отмечайте один или несколько, а в поле «Своё» дописывайте всё, что важно именно вам. Заполнять можно в несколько заходов — прогресс сохраняется в этом файле.</p>
+  <div class="meta">
+    <span class="chip">⏱ ~15–20 минут</span>
+    <span class="chip">📑 5 разделов</span>
+    <span class="chip">💾 Можно сохранить и продолжить позже</span>
+    <span class="chip">✱ Идеальных ответов нет</span>
+  </div>
+</header>
+
+<form id="briefForm" autocomplete="off">
+<div class="stack" id="stack">
+
+  <!-- IDENTITY -->
+  <section class="section" data-key="org">
+    <div class="section-head">
+      <div class="section-num">00</div>
+      <div class="section-titles">
+        <h2>О компании и заполняющем</h2>
+        <p class="sub">Чтобы мы понимали контекст и к кому обращаться по вопросам.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+      <div class="q">
+        <div class="ident">
+          <div class="field"><label>Название компании</label><input class="text-input" style="margin:0;width:100%" data-q="Название компании" placeholder="Например: Nacre Beauty"></div>
+          <div class="field"><label>Кто заполняет (имя, роль)</label><input class="text-input" style="margin:0;width:100%" data-q="Кто заполняет" placeholder="Имя, должность"></div>
+          <div class="field"><label>Контакт для связи (почта / телефон)</label><input class="text-input" style="margin:0;width:100%" data-q="Контакт заполняющего" placeholder="email или телефон"></div>
+          <div class="field"><label>Сколько человек в компании / в продажах</label><input class="text-input" style="margin:0;width:100%" data-q="Размер команды" placeholder="напр. 10 всего / 3 в продажах"></div>
+        </div>
+      </div>
+
+      <div class="q" data-q="Чем занимается компания" data-type="multi">
+        <div class="q-label"><span class="q-num">0.1</span><span class="q-title">Чем занимается компания<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="дополните или уточните"></div>
+      </div>
+
+      <div class="q" data-q="Тип клиентов" data-type="multi">
+        <div class="q-label"><span class="q-num">0.2</span><span class="q-title">С кем работаете и планируете работать<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Это определит, нужно ли разделять воронки и поля для B2B и B2C.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="например: дистрибьюторы, маркетплейсы"></div>
+      </div>
+
+      <div class="q" data-q="География продаж" data-type="multi">
+        <div class="q-label"><span class="q-num">0.3</span><span class="q-title">География продаж<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="конкретные страны / регионы"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 1: LEADS / CHANNELS -->
+  <section class="section" data-key="leads">
+    <div class="section-head">
+      <div class="section-num">01</div>
+      <div class="section-titles">
+        <h2>Лиды и каналы коммуникации</h2>
+        <p class="sub">Откуда приходят клиенты и как они к вам обращаются — чтобы свести всё в одно окно.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+
+      <div class="q" data-q="Каналы откуда приходят клиенты" data-type="multi">
+        <div class="q-label"><span class="q-num">1.1</span><span class="q-title">Через какие каналы к вам приходят клиенты?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Отметьте всё, что используете сейчас или планируете подключить.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="другой источник"></div>
+      </div>
+
+      <div class="q" data-q="Самые важные каналы" data-type="multi">
+        <div class="q-label"><span class="q-num">1.2</span><span class="q-title">Какие каналы приносят больше всего обращений?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Что должно собираться в одном окне" data-type="multi">
+        <div class="q-label"><span class="q-num">1.3</span><span class="q-title">Какие переписки нужно свести в единое окно CRM?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Чтобы менеджер отвечал из CRM, а руководитель видел всю историю.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Как сейчас теряются лиды" data-type="multi">
+        <div class="q-label"><span class="q-num">1.4</span><span class="q-title">Где сейчас чаще всего теряются обращения?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Что фиксировать о новом лиде" data-type="multi">
+        <div class="q-label"><span class="q-num">1.5</span><span class="q-title">Что важно сразу записать о новом лиде?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Это станет полями карточки лида в Zoho.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="ещё поля, которые вам нужны"></div>
+      </div>
+
+      <div class="q" data-q="Как квалифицируется лид" data-type="multi">
+        <div class="q-label"><span class="q-num">1.6</span><span class="q-title">По каким признакам лид считается «целевым»?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Чтобы CRM могла отделять нужных клиентов от нецелевых.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Распределение лидов между менеджерами" data-type="single">
+        <div class="q-label"><span class="q-num">1.7</span><span class="q-title">Как лиды должны распределяться между менеджерами?<span class="q-tag">один</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="опишите свою логику"></div>
+      </div>
+
+      <div class="q" data-q="Время реакции на лид" data-type="single">
+        <div class="q-label"><span class="q-num">1.8</span><span class="q-title">За какое время менеджер должен ответить на новое обращение?<span class="q-tag">один</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 2: DEALS / FUNNELS -->
+  <section class="section" data-key="deals">
+    <div class="section-head">
+      <div class="section-num">02</div>
+      <div class="section-titles">
+        <h2>Сделки и воронки</h2>
+        <p class="sub">Как клиент движется от первого контакта до оплаты — это станет вашими воронками.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+
+      <div class="q" data-q="Нужны ли отдельные воронки" data-type="multi">
+        <div class="q-label"><span class="q-num">2.1</span><span class="q-title">Нужны ли отдельные воронки под разные процессы?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Например, отдельная воронка под B2B и под B2C, или под продажу и под логистику.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="опишите воронку, которая вам нужна"></div>
+      </div>
+
+      <div class="q" data-q="Этапы основной воронки продаж" data-type="multi">
+        <div class="q-label"><span class="q-num">2.2</span><span class="q-title">Из каких этапов состоит ваша продажа?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Отметьте этапы, через которые реально проходит клиент. Порядок и формулировки уточним вместе.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="добавьте свой этап"></div>
+      </div>
+
+      <div class="q" data-q="Причины отказа / потери сделки" data-type="multi">
+        <div class="q-label"><span class="q-num">2.3</span><span class="q-title">По каким причинам сделки чаще всего срываются?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Станет списком причин отказа для аналитики.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Что фиксировать в карточке сделки" data-type="multi">
+        <div class="q-label"><span class="q-num">2.4</span><span class="q-title">Что должно храниться в карточке сделки?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other placeholder="дополнительные поля сделки"></div>
+      </div>
+
+      <div class="q" data-q="Задачи и напоминания" data-type="multi">
+        <div class="q-label"><span class="q-num">2.5</span><span class="q-title">Какие задачи и напоминания CRM должна ставить автоматически?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Чтобы менеджеры не забывали о клиентах.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Документы в сделке" data-type="multi">
+        <div class="q-label"><span class="q-num">2.6</span><span class="q-title">Какие документы формируются по ходу сделки?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Средний цикл сделки" data-type="single">
+        <div class="q-label"><span class="q-num">2.7</span><span class="q-title">Сколько обычно длится сделка от обращения до оплаты?<span class="q-tag">один</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 3: SALES / REPORTS -->
+  <section class="section" data-key="sales">
+    <div class="section-head">
+      <div class="section-num">03</div>
+      <div class="section-titles">
+        <h2>Продажи, контроль и отчётность</h2>
+        <p class="sub">Что руководство хочет видеть и контролировать в загрузке менеджеров.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+
+      <div class="q" data-q="Что контролировать в работе менеджеров" data-type="multi">
+        <div class="q-label"><span class="q-num">3.1</span><span class="q-title">Что вы хотите видеть по каждому менеджеру?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Это определит отчёты и дашборды для руководителя.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Отчёты для руководства" data-type="multi">
+        <div class="q-label"><span class="q-num">3.2</span><span class="q-title">Какие отчёты и срезы вам нужны?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Как часто смотреть отчёты" data-type="single">
+        <div class="q-label"><span class="q-num">3.3</span><span class="q-title">Как часто руководство планирует смотреть отчётность?<span class="q-tag">один</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Показатели успеха менеджера" data-type="multi">
+        <div class="q-label"><span class="q-num">3.4</span><span class="q-title">Как вы оцениваете, что менеджер работает хорошо?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Планы и KPI" data-type="multi">
+        <div class="q-label"><span class="q-num">3.5</span><span class="q-title">Есть ли планы / KPI, которые нужно отслеживать?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Права доступа" data-type="multi">
+        <div class="q-label"><span class="q-num">3.6</span><span class="q-title">Кто что должен видеть в CRM?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Разграничение доступа: кто видит все сделки, а кто только свои.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 4: CLIENTS -->
+  <section class="section" data-key="clients">
+    <div class="section-head">
+      <div class="section-num">04</div>
+      <div class="section-titles">
+        <h2>Клиенты и база</h2>
+        <p class="sub">Как хранить клиентов, чтобы возвращать их и продавать повторно.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+
+      <div class="q" data-q="Данные о клиенте" data-type="multi">
+        <div class="q-label"><span class="q-num">4.1</span><span class="q-title">Что нужно хранить в карточке клиента?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Сегментация клиентов" data-type="multi">
+        <div class="q-label"><span class="q-num">4.2</span><span class="q-title">Как вы хотите сегментировать клиентскую базу?<span class="q-tag">несколько</span></span></div>
+        <p class="q-hint">Чтобы делать рассылки и предложения по группам.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Повторные продажи" data-type="multi">
+        <div class="q-label"><span class="q-num">4.3</span><span class="q-title">Как вы работаете с повторными продажами?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Связь клиента и контактов" data-type="single">
+        <div class="q-label"><span class="q-num">4.4</span><span class="q-title">У одного клиента бывает несколько контактных лиц?<span class="q-tag">один</span></span></div>
+        <p class="q-hint">Например, в салоне — закупщик и владелец. Это влияет на структуру базы.</p>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION 5: PRACTICAL -->
+  <section class="section" data-key="extra">
+    <div class="section-head">
+      <div class="section-num">05</div>
+      <div class="section-titles">
+        <h2>Практика и приоритеты</h2>
+        <p class="sub">Что есть сейчас, что важнее всего и о чём ещё нам стоит знать.</p>
+      </div>
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+    <div class="section-body">
+
+      <div class="q" data-q="Что используется сейчас" data-type="multi">
+        <div class="q-label"><span class="q-num">5.1</span><span class="q-title">Где вы ведёте клиентов и сделки сейчас?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Что важно перенести" data-type="multi">
+        <div class="q-label"><span class="q-num">5.2</span><span class="q-title">Что нужно перенести в новую CRM?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Интеграции" data-type="multi">
+        <div class="q-label"><span class="q-num">5.3</span><span class="q-title">С какими сервисами CRM должна быть связана?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Главные приоритеты внедрения" data-type="multi">
+        <div class="q-label"><span class="q-num">5.4</span><span class="q-title">Что для вас важнее всего получить от CRM в первую очередь?<span class="q-tag">несколько</span></span></div>
+        <div class="options"></div>
+        <div class="other"><label>Своё:</label><input data-other></div>
+      </div>
+
+      <div class="q" data-q="Открытый комментарий">
+        <div class="q-label"><span class="q-num">5.5</span><span class="q-title">Что ещё нам важно знать о ваших продажах и процессах?</span></div>
+        <p class="q-hint">Любые детали, особенности, боли, пожелания — пишите свободно.</p>
+        <textarea class="free" data-q="Открытый комментарий" placeholder="Опишите своими словами…"></textarea>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+</form>
+
+<div class="save-row">
+  <button type="button" class="btn-soft" id="saveBtn">💾 Сохранить и продолжить позже</button>
+  <button type="button" class="btn-soft" id="loadBtn">📂 Загрузить сохранённый файл</button>
+  <input type="file" id="loadFile" class="hidden-file" accept=".crmbrief,.json">
+  <span class="save-note">Сохранится файл, который можно переслать и дозаполнить.</span>
+</div>
+
+<div class="actions">
+  <div class="actions-card">
+    <h3>Готовы отправить?</h3>
+    <p>Можно отправить даже частично заполненный бриф — это уже даст нам отличную опору. После отправки вы также получите копию ответов файлом, который удобно переслать коллегам.</p>
+    <div class="btn-row">
+      <button type="button" class="btn btn-primary" id="sendBtn">Отправить ответы ↗</button>
+      <button type="button" class="btn btn-ghost" id="downloadBtn">Скачать ответы файлом</button>
+    </div>
+  </div>
+</div>
+
+<div class="pagefoot">
+  Бриф на внедрение Zoho CRM <span class="dot"></span> блок: лиды · сделки · продажи · клиенты · каналы <span class="dot"></span> заполняется руководством
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ ВАРИАНТЫ ОТВЕТОВ ============ */
+const OPTIONS = {
+  "Чем занимается компания":["B2B продажи уходовой косметики","Вывод косметики на рынок / дистрибуция","Поставки для салонов красоты","Поставки для бьюти-предприятий (СПА, клиники)","Производство / собственный бренд","Розничные продажи конечным клиентам"],
+  "Тип клиентов":["B2B — салоны и бьюти-бизнес","B2B — дистрибьюторы и оптовики","B2C — конечные покупатели","Пока работаем только B2B","Планируем добавить B2C","Маркетплейсы / онлайн-площадки"],
+  "География продаж":["ОАЭ / Ближний Восток","СНГ","Европа","Азия","США / Северная Америка","По всему миру"],
+
+  "Каналы откуда приходят клиенты":["Instagram (Direct)","WhatsApp","Telegram","Сайт / форма на сайте","Email / почта","Телефонные звонки","Сарафан / рекомендации","Выставки и офлайн-мероприятия","Маркетплейсы","Рекламные кампании (таргет, Google)"],
+  "Самые важные каналы":["Instagram","WhatsApp","Telegram","Сайт","Email","Сарафан","Выставки"],
+  "Что должно собираться в одном окне":["Instagram Direct","WhatsApp","Telegram","Email","Сообщения с сайта / чат","Звонки и их запись","Комментарии и упоминания в соцсетях"],
+  "Как сейчас теряются лиды":["Сообщения в разных мессенджерах, не сведены вместе","Менеджер забыл ответить / потерял переписку","Нет фиксации обращений — всё в голове","Долгий ответ, клиент уходит","Нет напоминаний о следующем шаге","Лиды не передаются между менеджерами","Сложно понять, кто за кого отвечает"],
+  "Что фиксировать о новом лиде":["Имя","Телефон / WhatsApp","Instagram / соцсеть","Email","Тип клиента (салон / магазин / дистрибьютор)","Страна / город","Источник обращения","Что интересует (продукт / бренд)","Объём / предполагаемый заказ","Язык общения"],
+  "Как квалифицируется лид":["Это бизнес, а не частное лицо (для B2B)","Есть реальная потребность в продукции","Подходящая география / можем доставить","Адекватный объём закупки","Готов обсуждать условия","Не конкурент / не спам"],
+  "Распределение лидов между менеджерами":["Поровну по очереди (автоматически)","По источнику канала","По географии / стране","По типу клиента (B2B / B2C)","По загрузке менеджера","Руководитель распределяет вручную"],
+  "Время реакции на лид":["В течение 15 минут","В течение часа","В течение рабочего дня","До конца следующего дня","Чёткого норматива пока нет"],
+
+  "Нужны ли отдельные воронки":["Одна общая воронка продаж","Отдельная воронка B2B","Отдельная воронка B2C","Отдельная воронка под дистрибьюторов","Отдельная воронка под повторные продажи","Отдельная воронка логистики / доставки","Отдельная воронка под выставки и холодные контакты"],
+  "Этапы основной воронки продаж":["Новый лид","В работе / квалификация","Связались с клиентом","Встреча / звонок назначен","Встреча проведена","Подбор продукции","Подготовка КП / прайса","КП отправлено","Согласование заказа","Договор и инвойс","Ожидание оплаты","Оплачено","Передано в доставку","Отказ / потеря"],
+  "Причины отказа / потери сделки":["Дорого / не подошла цена","Выбрали конкурента","Не тот объём / не наш профиль","Клиент пропал / перестал отвечать","Не успели с доставкой / сроками","Нет нужного товара в наличии","Нецелевой клиент / спам","Перенесли решение на потом"],
+  "Что фиксировать в карточке сделки":["Сумма сделки","Валюта","Состав заказа / позиции","Бренды","Ответственный менеджер","Источник лида","Тип клиента","Ожидаемая дата закрытия","Условия оплаты","Условия и адрес доставки","Комментарии по переговорам"],
+  "Задачи и напоминания":["Перезвонить / написать клиенту","Напомнить отправить КП","Follow-up после отправки КП","Напомнить об оплате","Связаться перед встречей","Напомнить о повторной закупке","Уведомить руководителя о крупной сделке"],
+  "Документы в сделке":["Коммерческое предложение (КП)","Прайс-лист / подборка","Инвойс / счёт","Договор","Накладная / спецификация","Акт","Пока документы не формализованы"],
+  "Средний цикл сделки":["До нескольких дней","1–2 недели","Около месяца","1–3 месяца","Больше 3 месяцев","Очень по-разному"],
+
+  "Что контролировать в работе менеджеров":["Сколько лидов в работе","Сколько звонков / сообщений сделано","Сколько встреч проведено","Сколько КП отправлено","Сумма сделок в работе","Сумма закрытых продаж","Скорость ответа клиентам","Просроченные задачи","Конверсия по этапам"],
+  "Отчёты для руководства":["Воронка продаж (сколько на каждом этапе)","Продажи по менеджерам","Продажи по периодам (день / неделя / месяц)","Источники лидов и их эффективность","Причины отказов","Конверсия из лида в оплату","Прогноз выручки","Загрузка менеджеров"],
+  "Как часто смотреть отчёты":["Ежедневно","Несколько раз в неделю","Раз в неделю","Раз в месяц","По запросу, когда нужно"],
+  "Показатели успеха менеджера":["Объём закрытых продаж","Конверсия лид → сделка","Скорость реакции на обращения","Количество активных сделок","Отсутствие потерянных лидов","Количество повторных продаж","Дисциплина в ведении CRM"],
+  "Планы и KPI":["План по выручке на менеджера","План по количеству сделок","План по числу новых клиентов","KPI по скорости ответа","KPI по конверсии","Пока KPI нет, хотим внедрить","KPI не нужны"],
+  "Права доступа":["Менеджер видит только свои сделки","Менеджер видит все сделки","Руководитель видит всё","Отдельный доступ для бухгалтерии / логистики","Только руководитель меняет настройки","Ограничить экспорт базы"],
+
+  "Данные о клиенте":["Название компании / салона","Контактное лицо","Телефон / WhatsApp","Email","Instagram / соцсети","Страна и город","Тип бизнеса","Реквизиты для документов","История заказов","Любимые бренды / продукты","Язык общения"],
+  "Сегментация клиентов":["По типу (салон / магазин / дистрибьютор)","По географии","По объёму закупок","По частоте покупок","По брендам / категориям","Активные / спящие","VIP / ключевые клиенты"],
+  "Повторные продажи":["Напоминаем сами, когда пора повторить заказ","Делаем рассылки по базе","Предлагаем новинки постоянным клиентам","Считаем повторные продажи отдельно","Пока системно не работаем с повторными","Хотим выстроить этот процесс"],
+  "Связь клиента и контактов":["Обычно один контакт","Часто несколько (закупщик, владелец и др.)","По-разному в зависимости от клиента","Пока не задумывались"],
+
+  "Что используется сейчас":["Таблицы Excel / Google Sheets","Заметки / блокноты","Переписки в мессенджерах","Другая CRM","Ничего системного — всё в голове","AmoCRM / другая система"],
+  "Что важно перенести":["Текущую базу клиентов","Открытые сделки","Историю переписок","Контакты из мессенджеров","Документы и КП","Ничего, начинаем с чистого листа"],
+  "Интеграции":["Instagram","WhatsApp","Telegram","Сайт / формы","Email / почта","IP-телефония","Платёжные / инвойсы","Складской учёт / 1С","Бухгалтерия","Пока не знаем"],
+  "Главные приоритеты внедрения":["Свести все каналы в одно окно","Чтобы не терялись лиды и переписки","Контроль загрузки менеджеров","Прозрачные воронки и движение сделок","Отчёты для руководства","Автоматические задачи и напоминания","Удобная база клиентов","Быстрый запуск, без перегруза"]
+};
+
+/* ============ РЕНДЕР ОПЦИЙ ============ */
+document.querySelectorAll('.q[data-q]').forEach(q=>{
+  const key=q.getAttribute('data-q');
+  const type=q.getAttribute('data-type');
+  const box=q.querySelector('.options');
+  if(!box||!OPTIONS[key])return;
+  const inputType = type==='single'?'radio':'checkbox';
+  OPTIONS[key].forEach((opt,i)=>{
+    const id=key.replace(/[^a-zа-я0-9]/gi,'_')+'_'+i;
+    const lbl=document.createElement('label');
+    lbl.className='opt';
+    lbl.innerHTML=`<input type="${inputType}" name="${key}" value="${opt}" id="${id}"><span>${opt}</span>`;
+    box.appendChild(lbl);
+  });
+});
+
+/* checked highlight */
+document.addEventListener('change',e=>{
+  if(e.target.matches('.opt input')){
+    const opt=e.target.closest('.opt');
+    if(e.target.type==='radio'){
+      opt.closest('.options').querySelectorAll('.opt').forEach(o=>o.classList.remove('checked'));
+    }
+    opt.classList.toggle('checked',e.target.checked);
+    updateProgress();
+  }
+});
+document.addEventListener('input',e=>{ if(e.target.matches('[data-other],[data-q],.text-input')) updateProgress(); });
+
+/* collapse sections */
+document.querySelectorAll('.section-head').forEach(h=>{
+  h.addEventListener('click',()=>h.closest('.section').classList.toggle('collapsed'));
+});
+
+/* ============ PROGRESS ============ */
+function totalQuestions(){return document.querySelectorAll('.q').length;}
+function answeredCount(){
+  let n=0;
+  document.querySelectorAll('.q').forEach(q=>{
+    const checked=q.querySelector('.opt input:checked');
+    const other=[...q.querySelectorAll('[data-other]')].some(i=>i.value.trim());
+    const free=[...q.querySelectorAll('[data-q],.text-input')].some(i=>i.tagName&&i.value&&i.value.trim());
+    if(checked||other||free)n++;
+  });
+  return n;
+}
+function updateProgress(){
+  const pct=Math.round(answeredCount()/totalQuestions()*100);
+  document.getElementById('bar').style.width=pct+'%';
+  document.getElementById('pct').textContent=pct+'%';
+}
+
+/* ============ COLLECT ANSWERS ============ */
+function collect(){
+  const data={meta:{title:'Бриф на внедрение Zoho CRM',filledAt:new Date().toISOString()},sections:[]};
+  document.querySelectorAll('.section').forEach(sec=>{
+    const secTitle=sec.querySelector('h2').textContent.trim();
+    const items=[];
+    // identity inline inputs
+    sec.querySelectorAll('.field .text-input[data-q]').forEach(inp=>{
+      if(inp.value.trim())items.push({q:inp.getAttribute('data-q'),answer:inp.value.trim()});
+    });
+    sec.querySelectorAll('.q').forEach(q=>{
+      const key=q.getAttribute('data-q');
+      // open textarea / standalone text
+      const free=q.querySelector('textarea[data-q]');
+      if(free){ if(free.value.trim())items.push({q:key,answer:free.value.trim()}); return;}
+      if(!key)return;
+      if(q.querySelector('.field'))return; // identity handled
+      const checked=[...q.querySelectorAll('.opt input:checked')].map(i=>i.value);
+      const other=[...q.querySelectorAll('[data-other]')].map(i=>i.value.trim()).filter(Boolean);
+      if(checked.length||other.length){
+        let ans=[...checked];
+        if(other.length)ans.push('Своё: '+other.join('; '));
+        items.push({q:key,answer:ans});
+      }
+    });
+    if(items.length)data.sections.push({section:secTitle,items});
+  });
+  return data;
+}
+
+/* state for save/resume (full form, including empty) */
+function snapshot(){
+  const s={checks:{},others:{},texts:{}};
+  document.querySelectorAll('.opt input:checked').forEach(i=>{
+    s.checks[i.name]=s.checks[i.name]||[];s.checks[i.name].push(i.value);
+  });
+  document.querySelectorAll('[data-other]').forEach((i,idx)=>{if(i.value)s.others[idx]=i.value;});
+  document.querySelectorAll('[data-q]').forEach((i,idx)=>{if(i.value&&(i.tagName==='TEXTAREA'||i.classList.contains('text-input')))s.texts[i.getAttribute('data-q')]=i.value;});
+  return s;
+}
+function restore(s){
+  if(s.checks)Object.entries(s.checks).forEach(([name,vals])=>{
+    document.querySelectorAll(`.opt input[name="${CSS.escape(name)}"]`).forEach(inp=>{
+      if(vals.includes(inp.value)){inp.checked=true;inp.closest('.opt').classList.add('checked');}
+    });
+  });
+  if(s.others){const o=document.querySelectorAll('[data-other]');Object.entries(s.others).forEach(([idx,v])=>{if(o[idx])o[idx].value=v;});}
+  if(s.texts)document.querySelectorAll('[data-q]').forEach(i=>{if(s.texts[i.getAttribute('data-q')]!=null&&(i.tagName==='TEXTAREA'||i.classList.contains('text-input')))i.value=s.texts[i.getAttribute('data-q')];});
+  updateProgress();
+}
+
+/* ============ TEXT REPORT ============ */
+function toText(data){
+  let out='БРИФ НА ВНЕДРЕНИЕ ZOHO CRM\n';
+  out+='Заполнено: '+new Date(data.meta.filledAt).toLocaleString('ru-RU')+'\n';
+  out+='='.repeat(48)+'\n\n';
+  data.sections.forEach(sec=>{
+    out+='■ '+sec.section.toUpperCase()+'\n'+'-'.repeat(40)+'\n';
+    sec.items.forEach(it=>{
+      out+='• '+it.q+'\n';
+      if(Array.isArray(it.answer))it.answer.forEach(a=>out+='    – '+a+'\n');
+      else out+='    '+it.answer+'\n';
+      out+='\n';
+    });
+    out+='\n';
+  });
+  return out;
+}
+
+/* ============ TOAST ============ */
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+
+/* ============ DOWNLOAD answers (.txt) ============ */
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  const data=collect();
+  if(!data.sections.length){toast('Сначала ответьте хотя бы на один вопрос');return;}
+  const blob=new Blob([toText(data)],{type:'text/plain;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
+  toast('Файл с ответами скачан');
+});
+
+/* ============ SAVE / LOAD resume (.crmbrief) ============ */
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify(snapshot())],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='CRM_brief_progress.crmbrief';a.click();
+  toast('Прогресс сохранён в файл — его можно переслать');
+});
+document.getElementById('loadBtn').addEventListener('click',()=>document.getElementById('loadFile').click());
+document.getElementById('loadFile').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{restore(JSON.parse(r.result));toast('Сохранённые ответы загружены');}catch(_){toast('Не удалось прочитать файл');}};
+  r.readAsText(f);
+});
+
+/* ============ SEND to email ============ */
+const RECIPIENT='staskochukov@gmail.com';
+document.getElementById('sendBtn').addEventListener('click',async()=>{
+  const data=collect();
+  if(!data.sections.length){toast('Заполните хотя бы часть вопросов перед отправкой');return;}
+  const btn=document.getElementById('sendBtn');
+  const orig=btn.textContent;btn.textContent='Отправляем…';btn.style.opacity='.7';
+  const report=toText(data);
+  const company=(data.sections[0]?.items.find(i=>i.q==='Название компании')?.answer)||'компании';
+  let ok=false;
+  try{
+    const res=await fetch('https://formsubmit.co/ajax/'+RECIPIENT,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'Бриф Zoho CRM — '+company,
+        _template:'box',
+        Компания:company,
+        Ответы:report
+      })
+    });
+    ok=res.ok;
+  }catch(_){ok=false;}
+  btn.textContent=orig;btn.style.opacity='1';
+  if(ok){
+    toast('Ответы отправлены ✓ Спасибо!');
+    // also give them a copy
+    const blob=new Blob([report],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
+  }else{
+    toast('Не удалось отправить онлайн — файл скачан, перешлите его нам');
+    const blob=new Blob([report],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
+  }
+});
+
+updateProgress();
+</script>
+</body>
+</html>
