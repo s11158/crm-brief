@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a34">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Бриф на внедрение Zoho CRM</title>
 <style>
   :root{
@@ -183,6 +186,64 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
   @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto}}
+
+  /* ---------- Delivery / save status ---------- */
+  .dstatus{font-size:12px;color:var(--ink-soft);white-space:nowrap;display:flex;align-items:center;gap:6px}
+  .dstatus .sd{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s}
+  .dstatus.saving .sd{background:var(--accent-2)}
+  .dstatus.ok{color:var(--accent)}
+  .dstatus.ok .sd{background:var(--accent)}
+
+  /* ---------- Mobile sticky action bar ---------- */
+  .mbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;align-items:center;gap:12px;
+    background:rgba(252,251,248,.96);backdrop-filter:saturate(140%) blur(10px);
+    border-top:1px solid var(--line);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+  }
+  .mbar .mprog{flex:1;min-width:0;font-size:12.5px;color:var(--ink-soft);line-height:1.25}
+  .mbar .mprog b{color:var(--ink);font-variant-numeric:tabular-nums}
+  .mbar .mprog .mst{display:block;font-size:11.5px;color:var(--ink-soft)}
+  .mbar .mbtn{
+    flex:none;background:var(--accent);color:#fff;border:none;border-radius:11px;
+    font-family:inherit;font-size:15px;font-weight:600;padding:13px 20px;cursor:pointer;
+  }
+  .mbar .mbtn:active{transform:translateY(1px)}
+
+  /* ---------- Global mobile niceties ---------- */
+  *{-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  /* 16px on form controls prevents iOS auto-zoom on focus */
+  input,select,textarea{font-size:16px}
+
+  @media(max-width:760px){
+    .mbar{display:flex}
+    body{padding-bottom:74px}
+    .topbar-inner{padding:11px 16px;gap:10px}
+    .dstatus{display:none}
+    .progresswrap{max-width:none}
+    .hero{padding:34px 16px 22px}
+    .hero h1{font-size:clamp(26px,7.5vw,40px)}
+    .hero p{font-size:16px}
+    .stack{padding:0 16px 28px}
+    .actions{padding:8px 16px 26px}
+    .actions-card{padding:24px 20px}
+    .save-row{padding:0 16px 18px}
+    .pagefoot{padding:0 16px 48px}
+    .section{margin:14px 0}
+    .section-head{padding:18px 16px;gap:13px}
+    .section-titles h2{font-size:18px}
+    .section-body{padding:2px 16px 10px}
+    /* remove the 26px desktop indent — use full width on phones */
+    .q-hint,.options,.other,.ident,textarea.free,.text-input{margin-left:0}
+    textarea.free,.text-input{width:100%}
+    .opt{padding:14px 15px;min-height:54px;align-items:center}
+    .opt input{width:23px;height:23px;margin-top:0}
+    .opt span{font-size:16px}
+    .other{flex-direction:column;align-items:stretch;gap:7px}
+    .other label{margin-bottom:0}
+    .btn-row .btn{flex:1;justify-content:center}
+  }
 </style>
 </head>
 <body>
@@ -192,6 +253,7 @@
     <div class="brandmark"><span class="dot"></span><b>CRM&nbsp;Brief</b></div>
     <div class="progresswrap"><div class="progressbar" id="bar"></div></div>
     <div class="progresspct" id="pct">0%</div>
+    <div class="dstatus" id="dstatus"><span class="sd"></span><span class="dtxt">черновик</span></div>
   </div>
 </div>
 
@@ -199,7 +261,7 @@
   <div class="eyebrow">Внедрение Zoho CRM · опросник для руководства</div>
   <h1>Расскажите, как устроены ваши продажи — мы соберём под это CRM</h1>
   <p>Этот бриф помогает спроектировать систему так, чтобы ни один входящий клиент и ни одна переписка не терялись, менеджеры были под контролем, а сделки двигались по понятным воронкам.</p>
-  <p>Отвечайте свободно: где есть варианты — отмечайте один или несколько, а в поле «Своё» дописывайте всё, что важно именно вам. Заполнять можно в несколько заходов — прогресс сохраняется в этом файле.</p>
+  <p>Отвечайте свободно: где есть варианты — отмечайте один или несколько, а в поле «Своё» дописывайте всё, что важно именно вам. Заполнять можно в несколько заходов — прогресс сохраняется автоматически, можно закрыть страницу и вернуться позже.</p>
   <div class="meta">
     <span class="chip">⏱ ~15–20 минут</span>
     <span class="chip">📑 5 разделов</span>
@@ -532,7 +594,7 @@
 <div class="actions">
   <div class="actions-card">
     <h3>Готовы отправить?</h3>
-    <p>Можно отправить даже частично заполненный бриф — это уже даст нам отличную опору. После отправки вы также получите копию ответов файлом, который удобно переслать коллегам.</p>
+    <p>Можно отправить даже частично заполненный бриф — это уже даст нам отличную опору. Ваши ответы сохраняются автоматически по мере заполнения, так что ничего не потеряется.</p>
     <div class="btn-row">
       <button type="button" class="btn btn-primary" id="sendBtn">Отправить ответы ↗</button>
       <button type="button" class="btn btn-ghost" id="downloadBtn">Скачать ответы файлом</button>
@@ -542,6 +604,14 @@
 
 <div class="pagefoot">
   Бриф на внедрение Zoho CRM <span class="dot"></span> блок: лиды · сделки · продажи · клиенты · каналы <span class="dot"></span> заполняется руководством
+</div>
+
+<div class="mbar" id="mbar">
+  <div class="mprog">
+    <span><b id="mpct">0%</b> заполнено</span>
+    <span class="mst" id="mstatus">сохраняется автоматически</span>
+  </div>
+  <button type="button" class="mbtn" id="mSendBtn">Отправить</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -604,7 +674,18 @@ document.querySelectorAll('.q[data-q]').forEach(q=>{
   });
 });
 
-/* checked highlight */
+/* ============ КУДА ОТПРАВЛЯТЬ (живая Google-таблица) ============ */
+/* Сюда вставляется адрес вашего Google Apps Script Web App.
+   Пока пусто — страница всё равно сохраняет ответы в браузере и в файл. */
+const ENDPOINT='__WEBAPP_URL__';
+const ONLINE = /^https?:\/\//.test(ENDPOINT);
+
+/* стабильный идентификатор сессии заполняющего (одна строка в таблице) */
+const LS='crmbrief';
+let SESSION=localStorage.getItem(LS+'-id');
+if(!SESSION){SESSION='S'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);localStorage.setItem(LS+'-id',SESSION);}
+
+/* checked highlight + автосохранение */
 document.addEventListener('change',e=>{
   if(e.target.matches('.opt input')){
     const opt=e.target.closest('.opt');
@@ -612,10 +693,10 @@ document.addEventListener('change',e=>{
       opt.closest('.options').querySelectorAll('.opt').forEach(o=>o.classList.remove('checked'));
     }
     opt.classList.toggle('checked',e.target.checked);
-    updateProgress();
+    updateProgress();scheduleSave();
   }
 });
-document.addEventListener('input',e=>{ if(e.target.matches('[data-other],[data-q],.text-input')) updateProgress(); });
+document.addEventListener('input',e=>{ if(e.target.matches('[data-other],[data-q],.text-input')){ updateProgress();scheduleSave(); } });
 
 /* collapse sections */
 document.querySelectorAll('.section-head').forEach(h=>{
@@ -634,10 +715,12 @@ function answeredCount(){
   });
   return n;
 }
+function progressPct(){return Math.round(answeredCount()/totalQuestions()*100);}
 function updateProgress(){
-  const pct=Math.round(answeredCount()/totalQuestions()*100);
+  const pct=progressPct();
   document.getElementById('bar').style.width=pct+'%';
   document.getElementById('pct').textContent=pct+'%';
+  const mp=document.getElementById('mpct');if(mp)mp.textContent=pct+'%';
 }
 
 /* ============ COLLECT ANSWERS ============ */
@@ -738,43 +821,105 @@ document.getElementById('loadFile').addEventListener('change',e=>{
   r.readAsText(f);
 });
 
-/* ============ SEND to email ============ */
-const RECIPIENT='staskochukov@gmail.com';
-document.getElementById('sendBtn').addEventListener('click',async()=>{
-  const data=collect();
-  if(!data.sections.length){toast('Заполните хотя бы часть вопросов перед отправкой');return;}
-  const btn=document.getElementById('sendBtn');
-  const orig=btn.textContent;btn.textContent='Отправляем…';btn.style.opacity='.7';
-  const report=toText(data);
-  const company=(data.sections[0]?.items.find(i=>i.q==='Название компании')?.answer)||'компании';
-  let ok=false;
-  try{
-    const res=await fetch('https://formsubmit.co/ajax/'+RECIPIENT,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({
-        _subject:'Бриф Zoho CRM — '+company,
-        _template:'box',
-        Компания:company,
-        Ответы:report
-      })
-    });
-    ok=res.ok;
-  }catch(_){ok=false;}
-  btn.textContent=orig;btn.style.opacity='1';
-  if(ok){
-    toast('Ответы отправлены ✓ Спасибо!');
-    // also give them a copy
-    const blob=new Blob([report],{type:'text/plain;charset=utf-8'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
-  }else{
-    toast('Не удалось отправить онлайн — файл скачан, перешлите его нам');
-    const blob=new Blob([report],{type:'text/plain;charset=utf-8'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
-  }
-});
+/* ============ ПЛОСКИЙ СНИМОК ДЛЯ ТАБЛИЦЫ ============ */
+/* Одна строка = один заполняющий. Колонки — это вопросы, в порядке как в брифе. */
+function flatPayload(opts){
+  opts=opts||{};
+  const p={sessionId:SESSION};
+  p['Обновлено']=new Date().toLocaleString('ru-RU');
+  p['Прогресс']=progressPct()+'%';
+  p['Статус']=opts.final?'✅ ОТПРАВЛЕНО':'… заполняется';
+  // блок «О компании» (текстовые поля)
+  document.querySelectorAll('.field .text-input[data-q]').forEach(inp=>{
+    p[inp.getAttribute('data-q')]=inp.value.trim();
+  });
+  // остальные вопросы в порядке документа
+  document.querySelectorAll('.q[data-q]').forEach(q=>{
+    const key=q.getAttribute('data-q');
+    const free=q.querySelector('textarea[data-q]');
+    if(free){p[key]=free.value.trim();return;}
+    if(q.querySelector('.field'))return;
+    const checked=[...q.querySelectorAll('.opt input:checked')].map(i=>i.value);
+    const other=[...q.querySelectorAll('[data-other]')].map(i=>i.value.trim()).filter(Boolean);
+    const ans=[...checked];
+    if(other.length)ans.push('Своё: '+other.join('; '));
+    p[key]=ans.join('; ');
+  });
+  return p;
+}
 
+/* ============ ОТПРАВКА В GOOGLE-ТАБЛИЦУ ============ */
+function postSheet(payload,useBeacon){
+  if(!ONLINE)return;
+  const body=JSON.stringify(payload);
+  try{
+    if(useBeacon&&navigator.sendBeacon){
+      navigator.sendBeacon(ENDPOINT,new Blob([body],{type:'text/plain;charset=utf-8'}));
+    }else{
+      fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body,keepalive:true}).catch(()=>{});
+    }
+  }catch(_){}
+}
+
+/* ============ СТАТУС ДОСТАВКИ ============ */
+function setStatus(state,text){
+  const d=document.getElementById('dstatus');
+  if(d){d.className='dstatus'+(state?' '+state:'');d.querySelector('.dtxt').textContent=text;}
+  const ms=document.getElementById('mstatus');
+  if(ms)ms.textContent=text;
+}
+
+/* ============ АВТОСОХРАНЕНИЕ ============ */
+function saveLocal(){try{localStorage.setItem(LS,JSON.stringify(snapshot()));}catch(_){}}
+function loadLocal(){try{const s=localStorage.getItem(LS);if(s){restore(JSON.parse(s));return true;}}catch(_){}return false;}
+
+let saveT=null,lastSig='';
+function scheduleSave(){
+  saveLocal();
+  setStatus('saving',ONLINE?'сохранение…':'сохранено в браузере');
+  clearTimeout(saveT);
+  saveT=setTimeout(()=>pushNow(false),1400);
+}
+function pushNow(final){
+  saveLocal();
+  const p=flatPayload({final});
+  const sig=JSON.stringify(p);
+  if(!final && sig===lastSig){setStatus('ok',ONLINE?'сохранено ✓':'сохранено в браузере ✓');return;}
+  lastSig=sig;
+  postSheet(p,false);
+  if(ONLINE)setStatus('ok',final?'отправлено ✓':'сохранено ✓');
+  else setStatus('ok','сохранено в браузере ✓');
+}
+
+/* отправить недозаполненный черновик, когда уходят со страницы */
+function flushOnLeave(){
+  saveLocal();
+  if(answeredCount()>0)postSheet(flatPayload({}),true);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')flushOnLeave();});
+window.addEventListener('pagehide',flushOnLeave);
+
+/* ============ ФИНАЛЬНАЯ ОТПРАВКА ============ */
+function doSend(){
+  const data=collect();
+  if(!data.sections.length){toast('Заполните хотя бы часть вопросов');return;}
+  pushNow(true);
+  if(ONLINE){
+    toast('Ответы отправлены ✓ Спасибо!');
+  }else{
+    toast('Сохранено. Скачиваю файл — перешлите его нам.');
+    const blob=new Blob([toText(data)],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='CRM_brief_'+new Date().toISOString().slice(0,10)+'.txt';a.click();
+  }
+}
+document.getElementById('sendBtn').addEventListener('click',doSend);
+document.getElementById('mSendBtn').addEventListener('click',doSend);
+
+/* ============ СТАРТ ============ */
+if(loadLocal()){toast('Восстановлены ваши предыдущие ответы');}
 updateProgress();
+setStatus('', ONLINE?'черновик · сохраняется автоматически':'черновик · сохраняется в браузере');
 </script>
 </body>
 </html>
